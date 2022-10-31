@@ -5,12 +5,18 @@ from playwright.async_api import async_playwright
 import pandas as pd
 from dotenv import load_dotenv
 import os
+
+from senderMail import send_mail
 load_dotenv()
 
 data = date.today()
 format_data = data.strftime('%d/%m/%Y')
+date_today = str(date.today())
+directory = "C:/Users/wilk.silva/Documents/Automation/auto_recarga/Arquivos/download"+date_today+".zip"
+
 planilha = pd.read_excel("arquivos/Relatório Lista cartão PSG.xlsx",
                          usecols=['Nº Cartão', 'Valor'], dtype={'Nº Cartão': str, 'Valor': str}, skiprows=2)
+
 
 async def run(playwright):
     chromium = playwright.chromium
@@ -46,7 +52,8 @@ async def run(playwright):
     await new_frame.locator("#txtMemoDate").fill(format_data)
     await new_frame.locator("#txtVctoDate").fill(format_data)
     await new_frame.locator("#btnConfirm").click()
-
+    # await new_frame.locator("#btnConfirm").click()
+    send_mail(date_today, directory)
     time.sleep(10)
     await browser.close()
 
