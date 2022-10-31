@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 import time
 import asyncio
 from playwright.async_api import async_playwright
@@ -11,16 +11,6 @@ data = date.today()
 format_data = data.strftime('%d/%m/%Y')
 planilha = pd.read_excel("arquivos/Relatório Lista cartão PSG.xlsx",
                          usecols=['Nº Cartão', 'Valor'], dtype={'Nº Cartão': str, 'Valor': str}, skiprows=2)
-
-
-# def insert_name_and_value(new_frame, card_number, value):
-#     time.sleep(1)
-#     new_frame.locator("#txtCard").fill(card_number)
-#     time.sleep(1)
-#     new_frame.locator("#query").click()
-#     time.sleep(1)
-#     new_frame.locator("//*[@id='dgdUsuarios']/tbody/tr[2]/td[6]/input").fill(value)
-
 
 async def run(playwright):
     chromium = playwright.chromium
@@ -56,7 +46,6 @@ async def run(playwright):
     await new_frame.locator("#txtMemoDate").fill(format_data)
     await new_frame.locator("#txtVctoDate").fill(format_data)
     await new_frame.locator("#btnConfirm").click()
-    # await new_frame.locator("#btnConfirm").click()
 
     time.sleep(10)
     await browser.close()
