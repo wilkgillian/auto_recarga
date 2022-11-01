@@ -16,4 +16,5 @@
 <li><a href="https://playwright.dev/python/">Playwright</a></li>
 <li><a href="https://www.python.org/">Python</a></li>
 <li><a href="https://pandas.pydata.org/docs/index.html">Pandas</a></li>
+<li><a href="https://docs.python.org/3/library/smtplib.html">Smtplib</a></li>
 </ul>
