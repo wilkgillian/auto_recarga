@@ -12,7 +12,7 @@ fromaddr = os.environ['FROM_EMAIL_ADDRESS']
 toaddr = os.environ['TO_EMAIL_ADDRESS']
 
 
-def send_mail(date, directory):
+async def send_mail(date, directory):
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
