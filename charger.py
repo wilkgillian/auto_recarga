@@ -1,10 +1,13 @@
 from datetime import date
+import re
 import time
 import asyncio
+from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 import pandas as pd
 from dotenv import load_dotenv
 import os
+import requests
 
 from termcolor import colored
 
@@ -56,11 +59,11 @@ async def run(playwright):
         # if v_last ==
         await new_frame.locator("#txtCard").fill('')
         await new_frame.locator("#txtCard").fill(str(card_number))
-        # time.sleep(0.7)00000
+        # time.sleep(0.7)
         await new_frame.locator("#query").click()
         # await new_frame.locator("//*[@id='dgdUsuarios']/tbody/tr[2]/td[6]/input").fill('')
         await new_frame.locator("//*[@id='dgdUsuarios']/tbody/tr[2]/td[6]/input").fill(str(v))
-        # time.sleep(1)
+        # time.sleep(0.7)
         print(index, card_number, " -> ", v)
     await new_frame.locator("#btnNext").click()
     await new_frame.locator("#txtMemoDate").fill(data_liberacao)
@@ -79,15 +82,51 @@ async def run(playwright):
     await new_frame.locator("#query").click()
     # new_context = await browser.new_context()
     time.sleep(1)
-    async with context.expect_event("page") as new_page_info:
-        await new_frame.locator("//*[@id='dgdOrder']/tbody/tr[2]/td[6]/a/img").click()
-    new_page = await new_page_info.value
-    await new_page.wait_for_load_state()
-    # await new_page.locator("//*[@id='print']").click()
-    print(len(browser.contexts()))
+    url = await new_frame.locator("//*[@id='dgdOrder']/tbody/tr[2]/td[6]").inner_html()
+    # soup = BeautifulSoup(url, 'html.parser')
+    # value = soup.find_all('a')
+    pvdrId = re.search(r'\d{4},', url).group(0)
+    transId = re.search(r',\d{3},', url).group(0)
+    seqId = re.search(r',\d{1}\)', url).group(0)
+    seqId_rpl = seqId.replace(")", "")
+    url_from_boleto = 'https://vtclient.cuiaba.prodatamobility.com.br/Pages/wfm_Billet.aspx?ProviderID=' + \
+        pvdrId.replace(",", "")+'&TransactionID='+transId.replace(",",
+                                                                  "")+'&SequenceID='+seqId_rpl.replace(",", "")+'.pdf'
+    # https://vtclient.cuiaba.prodatamobility.com.br/Pages/wfm_Billet.aspx?ProviderID=3566&TransactionID=512&SequenceID=1
+    # page_boleto = await context.new_page()
+    print(url_from_boleto)
+    await new_frame.locator("//*[@id='dgdOrder']/tbody/tr[2]/td[6]/a/img").click()
+
+    # await page_boleto.goto(url_from_boleto)
+    path = "/Arquivos"
+    download = requests.get(url_from_boleto)
+    arquivo_path = os.path.join(path, os.path.basename(url_from_boleto))
+    time.sleep(5)
+    with open(arquivo_path, 'wb') as f:
+        f.write(download.content)
+
+    # async with page.expect_download() as download_info:
+    # await page_boleto.keyboard.press("Control+s")
+    # await page_boleto.keyboard.press("Enter")
+    # download = await download_info.value
+
+    # download.save_as("/Arquivos/file.pdf")
+    # async def handle_download(download):
+    #     print(await download.path())
+    # page_boleto.on("download", handle_download)
+    # await page_boleto.locator("/html/body/pdf-viewer//viewer-toolbar//div/div[3]/cr-icon-button[1]//div/iron-icon").click()
+    # async with page_boleto.expect_download() as download_info:
+    # download = await download_info.value
+    # # await new_page.wait_for_load_state()
+
+    # await download.save_as("/Arquivos/file.pdf").click()
+    # await new_page.locator("//*[@id='icon']/iron-icon").click()
+
+    # # await new_page.locator("//*[@id='print']").click()
+    # print(len(browser.contexts()))///*[@id="dgdOrder"]/tbody/tr[2]/td[6]
 
     # await send_mail(date_today, directory)
-    time.sleep(10)
+    time.sleep(60)
     await browser.close()
 
 
