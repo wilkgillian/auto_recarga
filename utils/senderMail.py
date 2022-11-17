@@ -16,7 +16,7 @@ ccaddr = os.environ['CC_EMAIL_ADDRESS']
 async def send_mail(date, directory):
     msg = MIMEMultipart()
     msg['From'] = fromaddr
-    msg['To'] = toaddr
+    msg['To'] = ccaddr
     msg['Cc'] = ccaddr
     msg['Subject'] = "🤖 SENAC BOT [AUTO RECARGA]"
     body = "Olá, solicitação de recargas concluídas. Segue em anexo o boleto."

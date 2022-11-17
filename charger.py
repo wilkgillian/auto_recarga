@@ -21,8 +21,10 @@ planilha = pd.read_excel("arquivos/Relatório Lista cartão PSG atualizado.xlsx"
                          usecols=['Nº Cartão', 'Valor'], dtype={'Nº Cartão': str, 'Valor': float}, skiprows=2, decimal=',')
 
 
-data_liberacao = input(colored("\n\nInsira a data da liberação: ", "green"))
-data_vencimento = input(colored("\n\nInsira a data do vencimento:", "green"))
+data_liberacao = input(
+    "Insira a data da liberação no formato: dd/mm/aaaa\n-> ")
+data_vencimento = input(
+    "Insira a data do vencimento no formato: dd/mm/aaaa\n->")
 
 path = "Arquivos/boleto"+date_today+".png"
 
@@ -107,7 +109,7 @@ async def run(playwright):
         print(colored("Falha ao enviar e-mail", "red", attrs=["reverse"]))
         return
     await browser.close()
-
+print(colored("Finalizado", "green", attrs=["reverse"]))
 
 async def main():
     async with async_playwright() as playwright:
