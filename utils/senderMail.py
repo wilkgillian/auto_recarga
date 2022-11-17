@@ -10,16 +10,18 @@ load_dotenv()
 
 fromaddr = os.environ['FROM_EMAIL_ADDRESS']
 toaddr = os.environ['TO_EMAIL_ADDRESS']
+ccaddr = os.environ['CC_EMAIL_ADDRESS']
 
 
 async def send_mail(date, directory):
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
+    msg['Cc'] = ccaddr
     msg['Subject'] = "🤖 SENAC BOT [AUTO RECARGA]"
     body = "Olá, solicitação de recargas concluídas. Segue em anexo o boleto."
     msg.attach(MIMEText(body, 'plain'))
-    filename = "Teste_sended"+date+".zip"
+    filename = "boleto"+date+".png"
     attachment = open(
         directory, "rb")
     p = MIMEBase('application', 'octet-stream')
